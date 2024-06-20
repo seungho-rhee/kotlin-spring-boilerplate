@@ -1,0 +1,91 @@
+spring:
+  main:
+    allow-bean-definition-overriding: true
+
+  application:
+    name: kotlin-spring-boilerplate
+
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DATA}?autoReconnect=true&useUnicode=true&characterEncoding=utf8&connectTimeout=30000&socketTimeout=30000&serverTimezone=UTC&rewriteBatchedStatements=true
+    username: ${MYSQL_USER}
+    password: ${MYSQL_PASS}
+    hikari:
+      auto-commit: false
+      pool-name: kotlin-spring-boilerplate # connection pool name
+      minimum-idle: 5
+      maximum-pool-size: 30
+      connection-timeout: 60000
+      connection-test-query: select 1
+      max-lifetime: 1800000
+      idle-timeout: 60000
+      data-source-properties: # https://github.com/brettwooldridge/HikariCP/wiki/MySQL-Configuration
+        cachePrepStmts: true
+        prepStmtCacheSize: 250
+        prepStmtCacheSqlLimit: 2048
+        useServerPrepStmts: true
+  jpa:
+    hibernate:
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    show-sql: false
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 50
+        order_inserts: true
+        order_updates: true
+
+# redis
+  redis:
+    host: ${REDIS_HOST}
+    port: ${REDIS_PORT}
+    lettuce:
+      pool:
+        max-active: 100
+        max-idle: 100
+        max-wait: 300ms
+        min-idle: 30
+        time-between-eviction-runs: 60000ms
+
+# kafka
+  kafka:
+    bootstrap-servers:
+      - ${KAFKA_HOST_1}
+      - ${KAFKA_HOST_2}
+      - ${KAFKA_HOST_3}
+    producer:
+      acks: 1
+
+server:
+  shutdown: graceful
+  compression:
+    enabled: true
+    mime-types: text/html,text/plain,text/css,application/javascript,application/json
+    min-response-size: 1024
+
+management:
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  pattern:
+    console: "[%level] [%t] %logger{36}.%M - %msg %X{server}%n"
+  level:
+    root: INFO
+    org:
+      apache:
+        kafka: WARN
+
+app:
+  client:
+    test:
+      url: ${TEST_HOST}
+      apiKey: ${TEST_KEY}
+  kafka:
+    topics:
+      example:
+        group: "example-g"
+        create: "example.create"
