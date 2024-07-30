@@ -9,7 +9,7 @@ import java.time.LocalDateTime
 @DynamicInsert
 @DynamicUpdate
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 class UserEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

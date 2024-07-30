@@ -1,32 +1,20 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
-    id("org.springframework.boot") version "3.1.5"
-    id("io.spring.dependency-management") version "1.1.3"
+    id("org.springframework.boot") version "3.3.1"
+    id("io.spring.dependency-management") version "1.1.5"
     id("org.jetbrains.kotlin.plugin.allopen") version "1.6.0"
-    kotlin("jvm") version "1.9.0"
-    kotlin("plugin.spring") version "1.9.0"
-    kotlin("plugin.jpa") version "1.9.0"
-    kotlin("kapt") version "1.9.0"
-    id("com.google.cloud.tools.jib") version "3.1.2"
-}
-
-
-allOpen {
-    annotation("jakarta.persistence.Entity")
-    annotation("jakarta.persistence.Embeddable")
-    annotation("jakarta.persistence.MappedSuperclass")
-}
-
-noArg {
-    annotation("jakarta.persistence.Entity")
+    kotlin("jvm") version "2.0.0"
+    kotlin("plugin.spring") version "2.0.0"
+    kotlin("plugin.jpa") version "2.0.0"
+    kotlin("kapt") version "2.0.0"
 }
 
 group = "kotlin-spring-boilerplate"
 version = "1.0.0-RELEASE"
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
 }
 
 repositories {
@@ -34,6 +22,9 @@ repositories {
 }
 
 dependencies {
+    // mac arm dependency
+    runtimeOnly("io.netty:netty-resolver-dns-native-macos:4.1.104.Final:osx-aarch_64")
+
     // jetbrains
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-noarg:1.6.0")
@@ -54,27 +45,24 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 
-    //jackson jsr310
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.15.3")
+    // jackson jsr310
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.3")
-
-    // jackson (json)
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
     // redis
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
     implementation("org.apache.commons:commons-pool2:2.4.2")
 
+    // db
     runtimeOnly("com.mysql:mysql-connector-j")
     implementation("com.querydsl:querydsl-jpa:5.0.0:jakarta")
     kapt("com.querydsl:querydsl-apt:5.0.0:jakarta")
-    annotationProcessor("com.querydsl:querydsl-apt:5.0.0:jakarta")
-    annotationProcessor("jakarta.annotation:jakarta.annotation-api")
-    annotationProcessor("jakarta.persistence:jakarta.persistence-api")
+    kapt("jakarta.annotation:jakarta.annotation-api")
+    kapt("jakarta.persistence:jakarta.persistence-api")
 
     // kafka
-    implementation("org.springframework.kafka:spring-kafka:2.8.3")
-    testImplementation("org.springframework.kafka:spring-kafka-test:2.8.3")
+    implementation("org.springframework.kafka:spring-kafka")
+    testImplementation("org.springframework.kafka:spring-kafka-test")
 
     // caffeine cache
     implementation("com.github.ben-manes.caffeine:caffeine:3.1.1")
@@ -83,12 +71,14 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.projectreactor:reactor-test")
 
+    // mem db for test
+    runtimeOnly("com.h2database:h2")
 }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions {
-        freeCompilerArgs += "-Xjsr305=strict"
-        jvmTarget = "17"
+
+kotlin {
+    compilerOptions {
+        freeCompilerArgs.addAll("-Xjsr305=strict")
     }
 }
 

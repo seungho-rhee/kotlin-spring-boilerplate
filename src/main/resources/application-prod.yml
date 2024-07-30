@@ -1,0 +1,58 @@
+#file: noinspection SpringBootApplicationYaml
+spring:
+  datasource:
+    write:
+      dialect: org.hibernate.dialect.MySQLDialect
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      jdbc-url: jdbc:mysql://${MYSQL_WRITE_HOST}:${MYSQL_PORT}/${MYSQL_DATA}?autoReconnect=true&useUnicode=true&characterEncoding=utf8&connectTimeout=30000&socketTimeout=30000&serverTimezone=UTC&rewriteBatchedStatements=true
+      username: ${MYSQL_USER}
+      password: ${MYSQL_PASS}
+      auto-commit: false
+      pool-name: backend-notification # connection pool name
+      minimum-idle: 5
+      maximum-pool-size: 30
+      connection-timeout: 60000
+      connection-test-query: select 1
+      max-lifetime: 1800000
+      idle-timeout: 60000
+      data-source-properties: # https://github.com/brettwooldridge/HikariCP/wiki/MySQL-Configuration
+        cachePrepStmts: true
+        prepStmtCacheSize: 250
+        prepStmtCacheSqlLimit: 2048
+        useServerPrepStmts: true
+    read:
+      dialect: org.hibernate.dialect.MySQLDialect
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      jdbc-url: jdbc:mysql://${MYSQL_READ_HOST}:${MYSQL_PORT}/${MYSQL_DATA}?autoReconnect=true&useUnicode=true&characterEncoding=utf8&connectTimeout=30000&socketTimeout=30000&serverTimezone=UTC
+      username: ${MYSQL_USER}
+      password: ${MYSQL_PASS}
+      auto-commit: false
+      pool-name: backend-notification # connection pool name
+      minimum-idle: 5
+      maximum-pool-size: 30
+      connection-timeout: 60000
+      connection-test-query: select 1
+      max-lifetime: 1800000
+      idle-timeout: 60000
+      data-source-properties: # https://github.com/brettwooldridge/HikariCP/wiki/MySQL-Configuration
+        cachePrepStmts: true
+        prepStmtCacheSize: 250
+        prepStmtCacheSqlLimit: 2048
+        useServerPrepStmts: true
+
+  jpa:
+    hibernate:
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    show-sql: false
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 50
+        order_inserts: true
+        order_updates: true
+
+app:
+  client:
+    push:
+      url: ${PUSH_HOST}

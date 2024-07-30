@@ -38,6 +38,4 @@ class UserEventHandler(
     fun userAfterCompletionEventListener(event: UpdateUserEvent) {
         log.info("Completion Event")
     }
-
-
 }

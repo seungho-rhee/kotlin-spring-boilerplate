@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.validation.BindException
+import org.springframework.web.HttpMediaTypeNotSupportedException
 import org.springframework.web.HttpRequestMethodNotSupportedException
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.MissingServletRequestParameterException
@@ -17,6 +18,8 @@ import org.springframework.web.bind.ServletRequestBindingException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
+import org.springframework.web.servlet.NoHandlerFoundException
+import org.springframework.web.servlet.resource.NoResourceFoundException
 import java.security.InvalidParameterException
 
 @ControllerAdvice
@@ -48,12 +51,24 @@ class GlobalExceptionHandler {
             IllegalStateException::class,
             IllegalArgumentException::class,
             DataIntegrityViolationException::class, // duplicated write
-            HttpRequestMethodNotSupportedException::class // http request method not support
+            HttpRequestMethodNotSupportedException::class, // http request method not support
+            HttpMediaTypeNotSupportedException::class,
         ],
     )
     fun handleInvalidParamException(e: Exception?): ResponseEntity<ErrorBody> {
         log.warn("[GlobalExceptionHandler] - bad request")
-        return ErrorResponse(BadRequestException())
+        return ErrorResponse(BadRequestException(e?.message))
+    }
+
+    @ExceptionHandler(
+        value = [
+            NoResourceFoundException::class,
+            NoHandlerFoundException::class,
+        ],
+    )
+    fun handleNoResourceException(e: Exception?):  ResponseEntity<ErrorBody> {
+        log.warn("[GlobalExceptionHandler] - not found")
+        return ErrorResponse(NotFoundException())
     }
 
     @ExceptionHandler(Throwable::class)
@@ -77,12 +92,12 @@ class APIErrorResponse(ex: APIException) : ResponseEntity<APIErrorBody>(
 data class APIErrorBody(
     val code: String,
     val debugMessage: String?,
-    val context: Any?,
+    val data: Any?,
 ) {
     constructor(e: APIException) : this(
         code = e.code,
         debugMessage = e.debugMessage,
-        context = e.context,
+        data = e.data,
     )
 }
 

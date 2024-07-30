@@ -32,17 +32,17 @@ class UserController(
         val users = userService.getUsers()
 
         return APISuccess(
-            context = users.map { user -> user.toResponse() }
+            data = users.map { user -> user.toResponse() }
         )
     }
 
-    @GetMapping(params = ["userId"])
+    @GetMapping("/{userId}")
     fun getUser(
-        @RequestParam @Min(0) userId: Long,
+        @PathVariable @Min(0) userId: Long,
     ): APISuccess<UserResponse> {
         val user = userService.getUser(userId = userId)
 
-        return APISuccess(context = user.toResponse())
+        return APISuccess(data = user.toResponse())
     }
 
     @PostMapping
@@ -83,13 +83,13 @@ class UserController(
             )
         }
 
-        return APISuccess(context = user.toResponse())
+        return APISuccess(data = user.toResponse())
     }
 
-    @PutMapping(params = ["userId"])
+    @PutMapping("/{userId}")
     @AtomicLock(ttlSeconds = 60, key = "#userId", useURL = false)
     fun updateUser(
-        @RequestParam @Min(0) userId: Long,
+        @PathVariable @Min(0) userId: Long,
         @RequestBody @Valid body: UpdateUserRequest,
     ): APISuccess<UserResponse> {
         val user = userService.updateUser(
@@ -97,23 +97,23 @@ class UserController(
             phoneNumber = body.phoneNumber,
         )
 
-        return APISuccess(context = user.toResponse())
+        return APISuccess(data = user.toResponse())
     }
 
-    @PatchMapping(params = ["userId"])
+    @PatchMapping("/{userId}")
     @AtomicLock(ttlSeconds = 60, key = "#userId", useURL = false)
     fun leaveUser(
-        @RequestParam @Min(0) userId: Long,
+        @PathVariable @Min(0) userId: Long,
     ): APISuccess<UserResponse> {
         val user = userService.leaveUser(userId = userId)
 
-        return APISuccess(context = user.toResponse())
+        return APISuccess(data = user.toResponse())
     }
 
-    @DeleteMapping(params = ["userId"])
+    @DeleteMapping("/{userId}")
     @AtomicLock(ttlSeconds = 60, key = "#userId", useURL = false)
     fun removeUser(
-        @RequestParam @Min(0) userId: Long,
+        @PathVariable @Min(0) userId: Long,
     ): APIResponse {
         userService.removeUser(userId = userId)
 
