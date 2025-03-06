@@ -1,8 +1,8 @@
 package boilerplate.kotlin.spring.api.user.dto
 
 import boilerplate.kotlin.spring.api.user.entity.type.GenderType
-import boilerplate.kotlin.spring.common.validation.MinZeroOrNull
-import boilerplate.kotlin.spring.common.validation.NotBlankOrNull
+import boilerplate.kotlin.spring.common.annotation.validation.MinZeroOrNull
+import boilerplate.kotlin.spring.common.annotation.validation.NotBlankOrNull
 import jakarta.validation.constraints.NotBlank
 import java.time.LocalDateTime
 

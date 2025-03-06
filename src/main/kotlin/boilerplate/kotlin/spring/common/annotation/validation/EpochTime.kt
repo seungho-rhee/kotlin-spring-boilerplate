@@ -1,4 +1,4 @@
-package boilerplate.kotlin.spring.common.validation
+package boilerplate.kotlin.spring.common.annotation.validation
 
 import jakarta.validation.Constraint
 import jakarta.validation.ConstraintValidator

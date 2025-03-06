@@ -5,6 +5,7 @@ import boilerplate.kotlin.spring.api.user.dto.User
 import boilerplate.kotlin.spring.api.user.entity.UserEntity
 import boilerplate.kotlin.spring.api.user.entity.type.GenderType
 import boilerplate.kotlin.spring.api.user.repository.UserRepository
+import boilerplate.kotlin.spring.common.annotation.custom.TaskOnly
 import boilerplate.kotlin.spring.common.dto.APICode
 import boilerplate.kotlin.spring.common.exception.APIException
 import org.springframework.cache.annotation.Cacheable
@@ -100,5 +101,15 @@ class UserService(
 
         // or
         // userRepository.deleteById(userId)
+    }
+
+    @Transactional
+    @TaskOnly
+    fun removeAllUsers() {
+        val users = userRepository.findAll()
+
+        if(users.isNotEmpty()) {
+            userRepository.deleteAll(users)
+        }
     }
 }

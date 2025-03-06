@@ -1,4 +1,4 @@
-package boilerplate.kotlin.spring.common.validation
+package boilerplate.kotlin.spring.common.annotation.validation
 
 import jakarta.validation.Constraint
 import jakarta.validation.ConstraintValidator
@@ -9,29 +9,28 @@ import kotlin.reflect.KClass
 
 @Target(AnnotationTarget.FIELD, AnnotationTarget.VALUE_PARAMETER)
 @Retention(AnnotationRetention.RUNTIME)
-@Constraint(validatedBy = [NotBlankOrNullValidator::class])
+@Constraint(validatedBy = [MinZeroOrNullValidator::class])
 @MustBeDocumented
-annotation class NotBlankOrNull(
-    val message: String = "String? invalid, zero-string or whitespace characters",
+annotation class MinZeroOrNull(
+    val message: String = "Int? invalid, empty Or min 0",
     val groups: Array<KClass<*>> = [],
     val payload: Array<KClass<out Payload>> = [],
 )
 
 @Component
-class NotBlankOrNullValidator : ConstraintValidator<NotBlankOrNull, String> {
+class MinZeroOrNullValidator : ConstraintValidator<MinZeroOrNull, Int> {
 
     /**
      * nullable 변수에 할당되는 밸리드
      *
      * null이면 통과
-     * 값이 있는데 NotBlank 이면 통과
-     * zero-string이나 whitespace는 false
+     * 값이 있고 0이상일때 통과
      */
-    override fun isValid(value: String?, context: ConstraintValidatorContext?): Boolean {
+    override fun isValid(value: Int?, context: ConstraintValidatorContext?): Boolean {
         if (value == null) {
             return true
         }
 
-        return value.isNotBlank()
+        return value >= 0
     }
 }
